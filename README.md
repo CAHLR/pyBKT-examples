@@ -42,7 +42,7 @@ python <example.py>
 **hand\_specified\_model3:** Sees how well the model performs when data is built using specified parameters.
 
 # Utility Functions
-### data\_helper.convert\_data
+### data\_helper.convert\_data(url, skill\_name, defaults=None, multiguess=False, multilearn=False, multiprior=False, multipair=False)
 Converts a given csv or txt file into a data structure that can be passed into pyBKT's modeling and utility functions such as EM\_Fit, crossvalidate, predict\_one\_step.
 
 **Parameters:**
@@ -63,7 +63,7 @@ Converts a given csv or txt file into a data structure that can be passed into p
 * multipair: optional argument, defaults to False, uses item\_order\_effect model if True.
 
 
-### crossvalidate.crossvalidate
+### crossvalidate.crossvalidate(data, folds=5, verbose=False, seed=0)
 Performs crossvalidation on data, returning a tuple containing accuracy and RMSE.
 
 **Parameters:**
@@ -72,13 +72,13 @@ Performs crossvalidation on data, returning a tuple containing accuracy and RMSE
 * verbose: optional argument, defaults to False, prints out learned model, RMSE, and accuracy for each iteration if True.
 * seed: optional argument, defaults to 0, specifying the seed in which the data is partitioned into by k-fold crossvalidation.
 
-### check\_data.check\_data
+### check\_data.check\_data(data)
 Checks input data structure to see if it's dimensions are valid for pyBKT functionality.
 
 **Parameters:**
 * data: input data, hopefully in the format of that returned by data\_helper.convert\_data.
 
-### accuracy.compute\_acc and rmse.compute\_rmse
+### accuracy.compute\_acc(true\_values, pred\_values, verbose=False) and rmse.compute\_rmse(true\_values, pred\_values, verbose=False)
 Computes accuracy and rmse, respectively, on test data using model from training data.
 
 **Parameters:**
