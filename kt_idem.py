@@ -6,13 +6,15 @@ from pyBKT.fit import EM_fit
 from utils import data_helper, check_data
 np.seterr(divide='ignore', invalid='ignore')
 
-skill_name = "Box and Whisker"
+num_fit_initializations = 20
+skill_name = "Table"
 
-#data!
-data = data_helper.convert_data("test.csv", skill_name)
+data = data_helper.convert_data("as.csv", skill_name, multiguess=True)
 check_data.check_data(data)
 num_learns = len(data["resource_names"])
 num_gs = len(data["gs_names"])
+
+#fit models, starting with random initializations
 
 num_fit_initializations = 5
 best_likelihood = float("-inf")
@@ -24,6 +26,9 @@ for i in range(num_fit_initializations):
 		best_likelihood = log_likelihoods[-1]
 		best_model = fitmodel
 
+# compare the fit model to the true model
+#print(best_model['As'])
+#print(best_model['guesses'])
 print('')
 print('Trained model for %s skill given %d learning rates, %d guess/slip rate' % (skill_name, num_learns, num_gs))
 print('\t\tlearned')

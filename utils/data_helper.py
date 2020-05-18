@@ -6,78 +6,101 @@ import numpy as np
 import io
 import requests
 
-def convert_data(url, skill_name, col_name=None, resource_name=None, gs_name=None, multipair_name=None, multiprior_name=None):
-  print(skill_name)
+def convert_data(url, skill_name, defaults=None, multilearn=False, multiguess=False, multipair=False, multiprior=False):
+  pd.set_option('mode.chained_assignment', None)
+  
+  # dataframe to retrieve and store data
   df = None
-  urltofile = url.replace('/', '')
+  
+  # save string only after last slash for file name
+  urltofile = url.rsplit('/', 1)[-1]
+  
+  # if url is a local file, read it from there
   if os.path.exists("data/"+urltofile):
     try:
-      f = open("data/" + urltofile, "rb")
+      f = open("data/" + urltofile, "rb")    
+      # assume comma delimiter
       df = pd.read_csv(io.StringIO(f.read().decode('latin')), low_memory=False)
     except:
-      f = open("data/" + urltofile, "rb")
+      f = open("data/" + urltofile, "rb") 
+      # try tab delimiter if comma delimiter fails
       df = pd.read_csv(io.StringIO(f.read().decode('latin')), low_memory=False, delimiter='\t')
+
+  # otherwise, fetch it from web using requests
   elif url[:4] == "http":
+    s = requests.get(url).content
     try:
-      s = requests.get(url).content
       df = pd.read_csv(io.StringIO(s.decode('latin')), low_memory=False)
     except:
-      s = requests.get(url).content
       df = pd.read_csv(io.StringIO(s.decode('latin')), low_memory=False, delimiter='\t')
     f = open("data/"+urltofile, 'w+')
+    # save csv to local file for quick lookup in the future
     df.to_csv(f)
 
+  # default column names for assistments
   as_default={'order_id': 'order_id',
                        'skill_name': 'skill_name',
                        'correct': 'correct',
                        'user_id': 'user_id',
+                       'multilearn': 'answer_type',
+                       'multiprior': 'correct',
+                       'multipair': 'problem_id',
+                       'multiguess': 'answer_type',
                        }
+
+  # default column names for cognitive tutors
   ct_default={'order_id': 'Row',
               'skill_name': 'KC(Default)',
               'correct': 'Correct First Attempt',
               'user_id': 'Anon Student Id',
+              'multilearn': 'Problem Hierarchy',
+              'multiprior': 'Correct First Attempt',
+              'multipair': 'Problem Name',
+              'multiguess': 'Problem Hierarchy',
                        }
 
-  if col_name is None:
-    if all(x in list(df.columns) for x in as_default.values()):
-      col_name = as_default
-    elif all(x in list(df.columns) for x in ct_default.values()):
-      col_name = ct_default
-    else:
-      raise ValueError("Incorrect column names specified")
-      
-  # sort by the order in which the problems were answered
-  df[col_name["order_id"]] = [int(i) for i in df[col_name["order_id"]]]
-  df.sort_values(col_name["order_id"], inplace=True)
+  # integrate custom defaults with default assistments/ct columns if they are still unspecified
+  if defaults is None:
+    defaults = {}
+  if all(x in list(df.columns) for x in as_default.values()):
+    for k,v in as_default.items():
+      if k not in defaults:
+        defaults[k] = as_default[k]
+  elif all(x in list(df.columns) for x in ct_default.values()):
+    for k,v in ct_default.items():
+      if k not in defaults:
+        defaults[k] = ct_default[k]
 
-  # for skill_name in skills:
-  skill = df[(df[col_name["skill_name"]]==skill_name)]
-  
-  # example of how to get the unique users
-  # uilist=skill['user_id'].unique()
+  # sort by the order in which the problems were answered
+  df[defaults["order_id"]] = [int(i) for i in df[defaults["order_id"]]]
+  df.sort_values(defaults["order_id"], inplace=True)
+
+  # filter out based on skill
+  skill = df[(df[defaults["skill_name"]]==skill_name)]
 
   # convert from 0=incorrect,1=correct to 1=incorrect,2=correct
-  skill.loc[:,col_name["correct"]]+=1
+  skill.loc[:,defaults["correct"]]+=1
   
   # filter out garbage
-  df3=skill[skill[col_name["correct"]]!=3]
+  df2=skill[skill[defaults["correct"]]!=3]
 
-  #remove data where there is only 1 data point for a specific student
-  df3=df3[(df3[col_name["user_id"]] == df3[col_name["user_id"]].shift(-1)) | (df3[col_name["user_id"]] == df3[col_name["user_id"]].shift(1))]
+  # remove data where there is only 1 data point for a specific student
+  df3=df2[(df2[defaults["user_id"]] == df2[defaults["user_id"]].shift(-1)) | (df2[defaults["user_id"]] == df2[defaults["user_id"]].shift(1))]
 
+  # array representing correctness of student answers
+  data=df3[defaults["correct"]].tolist()
   
-  data=df3[col_name["correct"]].tolist()
   starts, lengths, resources=[],[],[]
   counter, lcounter = 1, 0
   prev_id = -1
   Data={}
   gs_ref,resource_ref = {}, {}
   
- #form the start/length arrays
+ # form the starts/lengths arrays
   for _, i in df3.iterrows():
-      if i[col_name["user_id"]] != prev_id:
+      if i[defaults["user_id"]] != prev_id:
           starts.append(counter)
-          prev_id = i[col_name["user_id"]]
+          prev_id = i[defaults["user_id"]]
           lengths.append(lcounter)
           lcounter = 0
       lcounter += 1
@@ -85,46 +108,54 @@ def convert_data(url, skill_name, col_name=None, resource_name=None, gs_name=Non
   lengths.append(lcounter-1)
   lengths = np.asarray(lengths[1:])
 
-  #different types of resource handling
-  if multipair_name:#multipairs
+  # different types of resource handling: multipair, multiprior, multilearn and none
+  if multipair:
     counter = 2
     nopair = 1
     resource_ref["N/A"] = nopair
     for i in range(len(df3)):
-      if i == 0 or df3[i:i+1][col_name["user_id"]].values != df3[i-1:i][col_name["user_id"]].values:
+      # for the first entry of a new student, no pair
+      if i == 0 or df3[i:i+1][defaults["user_id"]].values != df3[i-1:i][defaults["user_id"]].values:
         resources.append(nopair)
       else:
-        k = (str)(df3[i:i+1][multipair_name].values)+" "+(str)(df3[i-1:i][multipair_name].values)
+        # each pair is keyed via "[item 1] [item 2]" 
+        k = (str)(df3[i:i+1][defaults["multipair"]].values)+" "+(str)(df3[i-1:i][defaults["multipair"]].values)
         if k in resource_ref:
           resources.append(resource_ref[k])
+        # form the resource reference as we iterate through the dataframe, mapping each new pair to a number [1, # total pairs]
         else:
           resource_ref[k] = counter
           resources.append(resource_ref[k])
           counter += 1
-  elif multiprior_name:#multipriors
+  elif multiprior:
     resources=[1]*len(data)
-    resource_ref = dict(zip(df3[multiprior_name].unique(),range(2, len(df3[multiprior_name].unique())+2)))
+    # create new resources [2, #total + 1] based on how student initially responds
+    resource_ref = dict(zip(df3[defaults["multiprior"]].unique(),range(2, len(df3[defaults["multiprior"]].unique())+2)))
     resource_ref["N/A"] = 1
+    # create phantom timeslices with resource 2 or 3 in front of each new student based on their initial response
     for i in range(len(starts)):
       starts[i] += i
       data.insert(starts[i], 0)
-      resources.insert(starts[i], resource_ref[df3[i:i+1][multiprior_name].values[0]])
+      resources.insert(starts[i], resource_ref[df3[i:i+1][defaults["multiprior"]].values[0]])
       lengths[i] += 1
-  elif resource_name:#multilearns
-    resource_ref=dict(zip(df3[resource_name].unique(),range(1,len(df3[resource_name].unique())+1)))
+  elif multilearn:
+    # map each new resource found to a number [1, # total]
+    resource_ref=dict(zip(df3[defaults["multilearn"]].unique(),range(1,len(df3[defaults["multilearn"]].unique())+1)))
     for _, i in df3.iterrows():
-      resources.append(resource_ref[i[resource_name]])
-  else:#no resource
+      resources.append(resource_ref[i[defaults["multilearn"]]])
+  else:
     resources=[1]*len(data)
 
-  #multiguess handling, make data n-dimensional where n is number of g/s types
-  if gs_name is not None:
-    gs_ref=dict(zip(df3[gs_name].unique(),range(len(df3[gs_name].unique()))))
+  # multiguess handling, make data n-dimensional where n is number of g/s types
+  if multiguess:
+    # map each new guess/slip case to a row [0, # total]
+    gs_ref=dict(zip(df3[defaults["multiguess"]].unique(),range(len(df3[defaults["multiguess"]].unique()))))
     data_temp = [[] for _ in range(len(gs_ref))]
     counter = 0
+    # make data n-dimensional, fill in corresponding row and make other non-row entries 0
     for _, i in df3.iterrows():
       for j in range(len(gs_ref)):
-        if gs_ref[i[gs_name]] == j:
+        if gs_ref[i[defaults["multiguess"]]] == j:
             data_temp[j].append(data[counter])
             counter += 1
         else:
@@ -134,6 +165,12 @@ def convert_data(url, skill_name, col_name=None, resource_name=None, gs_name=Non
     data = [data]
     Data["data"]=np.asarray(data,dtype='int32')
 
+  # for when no resource and/or guess column is selected
+  if not multilearn and not multipair and not multiprior:
+    resource_ref[""]=1  
+  if not multiguess:
+    gs_ref[""]=1
+
   resource=np.asarray(resources)
   stateseqs=np.copy(resource)
   Data["stateseqs"]=np.asarray([stateseqs],dtype='int32')
@@ -142,11 +179,7 @@ def convert_data(url, skill_name, col_name=None, resource_name=None, gs_name=Non
   Data["resources"]=resource
   Data["resource_names"]=resource_ref
   Data["gs_names"]=gs_ref
-  #for readability and proper num_learn/gs handling when no resource and/or guess column is selected
-  if resource_name is None and multipair_name is None and multiprior_name is None:
-    resource_ref["Overall Rate"]=1  
-  if gs_name is None:
-    gs_ref["Overall Rate"]=1
+
     
   return (Data)
 

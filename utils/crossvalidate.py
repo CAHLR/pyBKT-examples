@@ -9,7 +9,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.model_selection import KFold
 from copy import deepcopy
 
-#data only for the indices given
+# returns data only for the indices given based on starts array
 def fix_data(data, indices):
     training_data = {}
     resources = []
@@ -34,15 +34,17 @@ def fix_data(data, indices):
     training_data=(training_data)
     return training_data
 
-def crossvalidate(data, num_gs, num_learns, verbose=False):
-    folds = 5
+def crossvalidate(data, folds=5, verbose=False, seed=0):
+    num_learns = len(data["resource_names"])
+    num_gs = len(data["gs_names"])
     total = 0
     acc = 0
     num_fit_initializations = 20
-    kf = KFold(folds)
+    kf = KFold(folds, shuffle=True, random_state=seed)
     iteration = 0
     
-    for train, test in kf.split(data["starts"]): #crossvalidation on students, split into 5 groups by default
+    # crossvalidation on students which are identified by the starts array
+    for train, test in kf.split(data["starts"]): 
         iteration += 1
         training_data = fix_data(data, train)
 
@@ -70,11 +72,15 @@ def crossvalidate(data, num_gs, num_learns, verbose=False):
                 print('guess%d\t%.4f' % (s+1, best_model['guesses'][s]))
             for s in range(num_gs):
                 print('slip%d\t%.4f' % (s+1, best_model['slips'][s]))
-            
+        
         test_data = fix_data(data, test)
+
+        # run model predictions from training data on test data
         (correct_predictions, state_predictions) = predict_onestep.run(best_model, test_data)
         
-        total += rmse.compute_rmse(test_data["data"], correct_predictions)
-        acc += accuracy.compute_acc(test_data["data"], correct_predictions)
-    print("Average RMSE: ", total/folds)
-    print("Average Accuracy: ", acc/folds)
+        total += rmse.compute_rmse(test_data["data"], correct_predictions, verbose)
+        acc += accuracy.compute_acc(test_data["data"], correct_predictions, verbose)
+    if verbose:
+        print("Average RMSE: ", total/folds)
+        print("Average Accuracy: ", acc/folds)
+    return (acc/folds, total/folds)

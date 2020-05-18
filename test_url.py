@@ -1,4 +1,4 @@
-#Note: Downloads a ~50 MB csv file the first time it is run, and thus may run very slow for the first run.
+# Note: Downloads a ~50 MB csv file the first time it is run, and thus may run very slow for the first run.
 import sys
 sys.path.append('../')
 import numpy as np
@@ -9,7 +9,7 @@ from copy import deepcopy
 np.seterr(divide='ignore', invalid='ignore')
 skill_name = "Box and Whisker"
 
-#data!
+# data!
 data = data_helper.convert_data("https://drive.google.com/uc?export=download&id=0B3f_gAH-MpBmUmNJQ3RycGpJM0k", skill_name)
 check_data.check_data(data)
 num_learns = len(data["resource_names"])

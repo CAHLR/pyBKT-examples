@@ -14,7 +14,6 @@ skill_name = "Identifying units"
 data = data_helper.convert_data("ct.csv", skill_name)
 
 check_data.check_data(data)
-num_learns = len(data["resource_names"])
-num_gs = len(data["gs_names"])
 
-crossvalidate.crossvalidate(data, num_gs, num_learns, verbose=True)
+#specifying verbose allows data from all iterations of crossvalidation to be printed out
+crossvalidate.crossvalidate(data, verbose=True)

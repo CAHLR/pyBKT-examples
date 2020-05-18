@@ -1,3 +1,4 @@
+# example of using custom column specifications for a model using both multilearn and multiguess models
 import sys
 sys.path.append('../')
 import numpy as np
@@ -5,13 +6,20 @@ from pyBKT.generate import synthetic_data, random_model_uni
 from pyBKT.fit import EM_fit
 from utils import data_helper, check_data
 np.seterr(divide='ignore', invalid='ignore')
-skill_name = "Identifying units"
 
-#data!
-data = data_helper.convert_data("ct.csv", skill_name, multipair_name="Problem Name")
+num_fit_initializations = 20
+skill_name = "Table"
+
+custom_defaults = {
+        'multilearn': 'teacher_id',
+        'multiguess': 'teacher_id',
+        }
+data = data_helper.convert_data("as.csv", skill_name, defaults=custom_defaults, multiguess=True, multilearn=True)
 check_data.check_data(data)
 num_learns = len(data["resource_names"])
 num_gs = len(data["gs_names"])
+
+# fit models, starting with random initializations
 
 num_fit_initializations = 5
 best_likelihood = float("-inf")
@@ -23,6 +31,7 @@ for i in range(num_fit_initializations):
 		best_likelihood = log_likelihoods[-1]
 		best_model = fitmodel
 
+# compare the fit model to the true model
 print('')
 print('Trained model for %s skill given %d learning rates, %d guess/slip rate' % (skill_name, num_learns, num_gs))
 print('\t\tlearned')
