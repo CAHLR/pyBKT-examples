@@ -25,9 +25,6 @@ for i in range(num_fit_initializations):
 		best_model = fitmodel
 
 # compare the fit model to the true model
-
-#print(best_model['As'])
-
 print('')
 print('Trained model for %s skill given %d learning rates, %d guess/slip rate' % (skill_name, num_learns, num_gs))
 print('\t\tlearned')

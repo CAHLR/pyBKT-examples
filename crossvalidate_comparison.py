@@ -1,3 +1,5 @@
+#compares accuracy and rmse of different models, may take a LONG time to run since many models (25 total) are generated
+#item_order_effect can be especially slow since many different pairs are possible
 import sys
 sys.path.append('../')
 import numpy as np
@@ -8,42 +10,40 @@ import copy
 np.seterr(divide='ignore', invalid='ignore')
 num_fit_initializations = 20
 skill_name = "Identifying units"
-r_name = "Problem Hierarchy"
-seed = 2020 #can customize to anything
-results = {}
+seed, folds = 2020, 5 #can customize to anything, keep same seed and # folds over all trials
+results = {} #create dictionary to store accuracy and rmse results
 
 #data!
 print("starting simple model data collection")
-data = data_helper.convert_data("ct.csv", skill_name)
+data, df = data_helper.convert_data("ct.csv", skill_name, save_df=True)#save dataframe for further trials
 check_data.check_data(data)
-print("starting simple model")
-results["Simple Model"] = crossvalidate.crossvalidate(data, seed=seed)
+print("creating simple model")
+results["Simple Model"] = crossvalidate.crossvalidate(data, folds=folds, seed=seed)
 
 print("starting item_learning_effect data collection")
-data_multilearn = data_helper.convert_data("ct.csv", skill_name, multilearn=True)
+data_multilearn = data_helper.convert_data("ct.csv", skill_name, df=df, multilearn=True)
 check_data.check_data(data_multilearn)
-print("starting item_learning_effect model")
-results["Multilearn"] = crossvalidate.crossvalidate(data_multilearn, seed=seed)
+print("creating item_learning_effect model")
+results["Multilearn"] = crossvalidate.crossvalidate(data_multilearn, folds=folds, seed=seed)
 
-#predict one step doesn't support multiple guess rates...
-#data_multiguess = data_helper.convert_data("ct.csv", skill_name, multiguess=True)
+#print("starting kt_idem data collection")
+#data_multiguess = data_helper.convert_data("ct.csv", skill_name, df=df, multiguess=True)
 #check_data.check_data(data_multiguess)
-#num_gs = len(data_multiguess["gs_names"])
-#num_learns = len(data_multiguess["resource_names"])
-#results["Multiguess"] = crossvalidate.crossvalidate(data_multiguess, seed=seed)
+#print("creating kt_idem model")
+#results["Multiguess"] = crossvalidate.crossvalidate(data_multiguess, folds=folds, seed=seed)
 
 print("starting item_order_effect data collection")
-data_multipair = data_helper.convert_data("ct.csv", skill_name, multipair=True)
+data_multipair = data_helper.convert_data("ct.csv", skill_name, df=df, multipair=True)
 check_data.check_data(data_multipair)
-print("starting item_order_effect model")
-results["Multipair"] = crossvalidate.crossvalidate(data_multipair, seed=seed)
+print("creating item_order_effect model")
+results["Multipair"] = crossvalidate.crossvalidate(data_multipair, folds=folds, seed=seed)
 
 
 print("starting kt_pps model data collection")
-data_multiprior = data_helper.convert_data("ct.csv", skill_name, multiprior=True)
+data_multiprior = data_helper.convert_data("ct.csv", skill_name, df=df, multiprior=True)
 check_data.check_data(data_multiprior)
-print("starting kt_pps model")
-results["Multiprior"] = crossvalidate.crossvalidate(data_multiprior, seed=seed)
+print("creating kt_pps model")
+results["Multiprior"] = crossvalidate.crossvalidate(data_multiprior, folds=folds, seed=seed)
 
 results = {k: v for k, v in sorted(results.items(), key=lambda item: -item[1][0])}
 print("Model\t\tAccuracy\tRMSE")

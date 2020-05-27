@@ -6,36 +6,35 @@ import numpy as np
 import io
 import requests
 
-def convert_data(url, skill_name, defaults=None, multilearn=False, multiguess=False, multipair=False, multiprior=False):
+def convert_data(url, skill_name, df=None, save_df=False, defaults=None, multilearn=False, multiguess=False, multipair=False, multiprior=False):
   pd.set_option('mode.chained_assignment', None)
   
   # dataframe to retrieve and store data
-  df = None
   
-  # save string only after last slash for file name
-  urltofile = url.rsplit('/', 1)[-1]
+  if df is None:
+    # save string only after last slash for file name
+    urltofile = url.rsplit('/', 1)[-1]
   
-  # if url is a local file, read it from there
-  if os.path.exists("data/"+urltofile):
-    try:
-      f = open("data/" + urltofile, "rb")    
-      # assume comma delimiter
-      df = pd.read_csv(io.StringIO(f.read().decode('latin')), low_memory=False)
-    except:
-      f = open("data/" + urltofile, "rb") 
-      # try tab delimiter if comma delimiter fails
-      df = pd.read_csv(io.StringIO(f.read().decode('latin')), low_memory=False, delimiter='\t')
-
-  # otherwise, fetch it from web using requests
-  elif url[:4] == "http":
-    s = requests.get(url).content
-    try:
-      df = pd.read_csv(io.StringIO(s.decode('latin')), low_memory=False)
-    except:
-      df = pd.read_csv(io.StringIO(s.decode('latin')), low_memory=False, delimiter='\t')
-    f = open("data/"+urltofile, 'w+')
-    # save csv to local file for quick lookup in the future
-    df.to_csv(f)
+    # if url is a local file, read it from there
+    if os.path.exists("data/"+urltofile):
+      try:
+        f = open("data/" + urltofile, "rb")    
+        # assume comma delimiter
+        df = pd.read_csv(io.StringIO(f.read().decode('latin')), low_memory=False)
+      except:
+        f = open("data/" + urltofile, "rb") 
+        # try tab delimiter if comma delimiter fails
+        df = pd.read_csv(io.StringIO(f.read().decode('latin')), low_memory=False, delimiter='\t')
+    # otherwise, fetch it from web using requests
+    elif url[:4] == "http":
+      s = requests.get(url).content
+      try:
+        df = pd.read_csv(io.StringIO(s.decode('latin')), low_memory=False)
+      except:
+        df = pd.read_csv(io.StringIO(s.decode('latin')), low_memory=False, delimiter='\t')
+      f = open("data/"+urltofile, 'w+')
+      # save csv to local file for quick lookup in the future
+      df.to_csv(f)
 
   # default column names for assistments
   as_default={'order_id': 'order_id',
@@ -53,10 +52,10 @@ def convert_data(url, skill_name, defaults=None, multilearn=False, multiguess=Fa
               'skill_name': 'KC(Default)',
               'correct': 'Correct First Attempt',
               'user_id': 'Anon Student Id',
-              'multilearn': 'Problem Hierarchy',
+              'multilearn': 'Problem Name',
               'multiprior': 'Correct First Attempt',
               'multipair': 'Problem Name',
-              'multiguess': 'Problem Hierarchy',
+              'multiguess': 'Problem Name',
                        }
 
   # integrate custom defaults with default assistments/ct columns if they are still unspecified
@@ -180,7 +179,8 @@ def convert_data(url, skill_name, defaults=None, multilearn=False, multiguess=Fa
   Data["resource_names"]=resource_ref
   Data["gs_names"]=gs_ref
 
-    
+  if save_df:
+    return (Data), df
   return (Data)
 
   

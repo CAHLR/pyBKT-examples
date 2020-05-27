@@ -10,11 +10,11 @@ np.seterr(divide='ignore', invalid='ignore')
 num_fit_initializations = 20
 
 #data!
-data = data_helper.convert_data("ct.csv", "Identifying units")
+data = data_helper.convert_data("as.csv", "Box and Whisker")
 check_data.check_data(data)
 num_learns = len(data["resource_names"])
 num_gs = len(data["gs_names"])
-num_fit_initializations = 20
+num_fit_initializations = 5
 best_likelihood = float("-inf")
 
 for i in range(num_fit_initializations):

@@ -14,7 +14,7 @@ git clone https://github.com/CAHLR/pyBKT-examples.git
 ```
 Navigate to the cloned repository and run
 ```
-python <example.py>
+python3 <example.py>
 ```
 
 # Example Files Included
@@ -57,6 +57,8 @@ Converts a given csv or txt file into a data structure that can be passed into p
     - 'multiprior', specifies column for kt_pps.
     - 'multipair', specifies column for item\_order\_effect.
     - 'multiguess', specifies column for kt_idem.
+* df: optional argument, if not None uses passed in data frame instead of retrieving from URL/file path
+* save\_df: optional argumment, defaults to False, also returns the data frame retrieved from URL/file path along with the data structure.
 * multiguess: optional argument, defaults to False, uses kt_idem model if True. 
 * multilearn: optional argument, defaults to False, uses item\_learning\_effect model if True.
 * multiprior: optional argument, defaults to False, uses kt_pps model if True.

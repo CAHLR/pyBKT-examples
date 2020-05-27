@@ -4,9 +4,6 @@ import numpy as np
 from pyBKT.generate import synthetic_data, random_model_uni
 from pyBKT.fit import EM_fit, predict_onestep
 from utils import accuracy, rmse, check_data
-from sklearn.model_selection import cross_val_score
-from sklearn.model_selection import train_test_split
-from sklearn.model_selection import KFold
 from copy import deepcopy
 
 # returns data only for the indices given based on starts array
@@ -40,14 +37,16 @@ def crossvalidate(data, folds=5, verbose=False, seed=0):
     total = 0
     acc = 0
     num_fit_initializations = 20
-    kf = KFold(folds, shuffle=True, random_state=seed)
-    iteration = 0
-    
-    # crossvalidation on students which are identified by the starts array
-    for train, test in kf.split(data["starts"]): 
-        iteration += 1
-        training_data = fix_data(data, train)
+    split_size = (len(data["starts"])//folds)
+    #create random permutation to act as indices for folds for crossvalidation
+    shuffle = np.random.RandomState(seed=seed).permutation(len(data["starts"]))
 
+    # crossvalidation on students which are identified by the starts array
+    for iteration in range(folds):
+        #create training/test data based on random permutation from earlier
+        train = np.concatenate((shuffle[0:iteration*split_size],shuffle[(iteration+1)*split_size:len(data["starts"])]))
+        test = shuffle[iteration*split_size:(iteration+1)*split_size]
+        training_data = fix_data(data, train)
         num_fit_initializations = 5
         best_likelihood = float("-inf")
         
@@ -57,7 +56,7 @@ def crossvalidate(data, folds=5, verbose=False, seed=0):
         	if(log_likelihoods[-1] > best_likelihood):
         		best_likelihood = log_likelihoods[-1]
         		best_model = fitmodel
-        		
+	
         if verbose:
             print(" ")
             print('Iteration %d' % (iteration))
@@ -74,10 +73,8 @@ def crossvalidate(data, folds=5, verbose=False, seed=0):
                 print('slip%d\t%.4f' % (s+1, best_model['slips'][s]))
         
         test_data = fix_data(data, test)
-
         # run model predictions from training data on test data
         (correct_predictions, state_predictions) = predict_onestep.run(best_model, test_data)
-        
         total += rmse.compute_rmse(test_data["data"], correct_predictions, verbose)
         acc += accuracy.compute_acc(test_data["data"], correct_predictions, verbose)
     if verbose:

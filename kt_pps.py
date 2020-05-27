@@ -19,6 +19,7 @@ best_likelihood = float("-inf")
 
 for i in range(num_fit_initializations):
     fitmodel = random_model_uni.random_model_uni(num_learns, num_gs) # include this line to randomly set initial param values
+    #set prior to 0
     fitmodel["pi_0"] = np.array([[1], [0]])
     fitmodel["prior"] = 0
     (fitmodel, log_likelihoods) = EM_fit.EM_fit(fitmodel, data)
@@ -26,6 +27,7 @@ for i in range(num_fit_initializations):
         best_likelihood = log_likelihoods[-1]
         best_model = fitmodel
 
+#treat learn rates of false timeslices as prior rate
 print('')
 print('Trained model for %s skill given %d learning rates, %d guess/slip rate' % (skill_name, num_learns, num_gs))
 print('\t\tlearned')

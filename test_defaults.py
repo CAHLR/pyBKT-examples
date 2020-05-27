@@ -10,6 +10,7 @@ np.seterr(divide='ignore', invalid='ignore')
 num_fit_initializations = 20
 skill_name = "Table"
 
+#can set defaults like so, now multilearn and multiguess will use teacher_id as column identifier (instead of answer_type by default)
 custom_defaults = {
         'multilearn': 'teacher_id',
         'multiguess': 'teacher_id',
