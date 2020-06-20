@@ -6,9 +6,9 @@ import numpy as np
 import io
 import requests
 
-def convert_data(url, skill_name, df=None, save_df=False, defaults=None, multilearn=False, multiguess=False, multipair=False, multiprior=False):
+def convert_data(url, skill_name, df=None, return_df=None, defaults=None, multilearn=False, multiguess=False, multipair=False, multiprior=False):
   pd.set_option('mode.chained_assignment', None)
-  
+  print(skill_name)
   # dataframe to retrieve and store data
   
   if df is None:
@@ -44,7 +44,7 @@ def convert_data(url, skill_name, df=None, save_df=False, defaults=None, multile
                        'multilearn': 'answer_type',
                        'multiprior': 'correct',
                        'multipair': 'problem_id',
-                       'multiguess': 'answer_type',
+                       'multiguess': 'problem_id',
                        }
 
   # default column names for cognitive tutors
@@ -81,11 +81,14 @@ def convert_data(url, skill_name, df=None, save_df=False, defaults=None, multile
   skill.loc[:,defaults["correct"]]+=1
   
   # filter out garbage
-  df2=skill[skill[defaults["correct"]]!=3]
+  df3=skill[skill[defaults["correct"]]!=3]
 
   # remove data where there is only 1 data point for a specific student
-  df3=df2[(df2[defaults["user_id"]] == df2[defaults["user_id"]].shift(-1)) | (df2[defaults["user_id"]] == df2[defaults["user_id"]].shift(1))]
+  #df3=df2[(df2[defaults["user_id"]] == df2[defaults["user_id"]].shift(-1)) | (df2[defaults["user_id"]] == df2[defaults["user_id"]].shift(1))]
+  #if df3[len(df3):len(df3)+1][defaults["user_id"]].values != df3[len(df3)-1:len(df3)][defaults["user_id"]].values:
+  #  df3.drop(len(df3))
 
+  
   # array representing correctness of student answers
   data=df3[defaults["correct"]].tolist()
   
@@ -104,7 +107,7 @@ def convert_data(url, skill_name, df=None, save_df=False, defaults=None, multile
           lcounter = 0
       lcounter += 1
       counter += 1
-  lengths.append(lcounter-1)
+  lengths.append(lcounter)
   lengths = np.asarray(lengths[1:])
 
   # different types of resource handling: multipair, multiprior, multilearn and none
@@ -178,12 +181,11 @@ def convert_data(url, skill_name, df=None, save_df=False, defaults=None, multile
   Data["resources"]=resource
   Data["resource_names"]=resource_ref
   Data["gs_names"]=gs_ref
+  print(lengths)
 
-  if save_df:
+  if return_df:
     return (Data), df
   return (Data)
-
-  
   
  
 
