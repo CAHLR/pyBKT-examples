@@ -52,7 +52,7 @@ def crossvalidate(data, folds=5, verbose=False, seed=0):
         
         for i in range(num_fit_initializations):
         	fitmodel = random_model_uni.random_model_uni(num_learns, num_gs) # include this line to randomly set initial param values
-        	(fitmodel, log_likelihoods) = EM_fit.EM_fit(fitmodel, training_data, 0)
+        	(fitmodel, log_likelihoods) = EM_fit.EM_fit(fitmodel, training_data)
         	if(log_likelihoods[-1] > best_likelihood):
         		best_likelihood = log_likelihoods[-1]
         		best_model = fitmodel
@@ -74,7 +74,7 @@ def crossvalidate(data, folds=5, verbose=False, seed=0):
         
         test_data = fix_data(data, test)
         # run model predictions from training data on test data
-        (correct_predictions, state_predictions) = predict_onestep.run(best_model, test_data,0)
+        (correct_predictions, state_predictions) = predict_onestep.run(best_model, test_data)
         total += rmse.compute_rmse(test_data["data"], correct_predictions, verbose)
         acc += accuracy.compute_acc(test_data["data"], correct_predictions, verbose)
     if verbose:
