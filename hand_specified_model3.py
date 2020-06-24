@@ -48,7 +48,7 @@ best_likelihood = float("-inf")
 
 for i in range(num_fit_initializations):
 	fitmodel = random_model_uni.random_model_uni(num_learns, num_gs) # include this line to randomly set initial param values
-	(fitmodel, log_likelihoods) = EM_fit.EM_fit(fitmodel, data);
+	(fitmodel, log_likelihoods) = EM_fit.EM_fit(fitmodel, data, 0);
 	if(log_likelihoods[-1] > best_likelihood):
 		best_likelihood = log_likelihoods[-1]
 		best_model = fitmodel

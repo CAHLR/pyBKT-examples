@@ -6,9 +6,9 @@ import numpy as np
 import io
 import requests
 
-def convert_data(url, skill_name, df=None, return_df=None, defaults=None, multilearn=False, multiguess=False, multipair=False, multiprior=False):
+def convert_data(url, skill_name, df=None, return_df=False, defaults=None, multilearn=False, multiguess=False, multipair=False, multiprior=False):
   pd.set_option('mode.chained_assignment', None)
-  print(skill_name)
+  print("Skill: "+skill_name)
   # dataframe to retrieve and store data
   
   if df is None:
@@ -175,7 +175,6 @@ def convert_data(url, skill_name, df=None, return_df=None, defaults=None, multil
   Data["resources"]=resource
   Data["resource_names"]=resource_ref
   Data["gs_names"]=gs_ref
-  print(lengths)
 
   if return_df:
     return (Data), df

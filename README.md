@@ -35,19 +35,23 @@ python3 <example.py>
 
 **test_url:** Retrieves data from the web instead of locally.
 
-**crossvalidate_comparison:** Compares accuracy and RMSE of the different supported models of pyBKT on the same data set.
+**crossvalidate_cognitive:** Compares accuracy and RMSE of the different supported models of pyBKT on the same cognitive tutor data set.
+
+**crossvalidate_assistments:** Compares accuracy and RMSE of the different supported models of pyBKT on the same assistments data set.
 
 **crossvalidate_simple:** Performs crossvalidation using one model and prints out all intermediate data and calculations.
 
-**hand\_specified\_model3:** Sees how well the model performs when data is built using specified parameters.
+**hand\_specified\_model3:** Sees how well the model performs when data is generated using specified parameters.
 
 # Utility Functions
-### data\_helper.convert\_data(url, skill\_name, defaults=None, multiguess=False, multilearn=False, multiprior=False, multipair=False)
+### data\_helper.convert\_data(url, skill\_name, df=None, return_df=False,  defaults=None, multiguess=False, multilearn=False, multiprior=False, multipair=False)
 Converts a given csv or txt file into a data structure that can be passed into pyBKT's modeling and utility functions such as EM\_Fit, crossvalidate, predict\_one\_step.
 
 **Parameters:**
 * URL: either a local filepath or URL to read data from, in txt or csv format.
 * skill\_name: name of specific skill to gather data.
+* df: optional argument, defaults to none, pandas dataframe in the format that data_helper returns. When df is not None, URL will be ignored and data will be parsed and formatted using data from df.
+* return_df: optional argument, returns dataframe (without modifications based on multiple resources types, guess types, etc.) if True.
 * defaults: optional argument, defaults to None, dictionary specifying custom columns for skill name, user id, etc. If data set is not assistments or cognitive tutor, all columns must be set here. All column name keys: 
     - 'order_id', specifies the ordering of data (usually defaults to time).
     - 'skill_name', specifies column to search for inputted skill\_name.
@@ -57,12 +61,10 @@ Converts a given csv or txt file into a data structure that can be passed into p
     - 'multiprior', specifies column for kt_pps.
     - 'multipair', specifies column for item\_order\_effect.
     - 'multiguess', specifies column for kt_idem.
-* df: optional argument, if not None uses passed in data frame instead of retrieving from URL/file path
-* save\_df: optional argumment, defaults to False, also returns the data frame retrieved from URL/file path along with the data structure.
-* multiguess: optional argument, defaults to False, uses kt_idem model if True. 
-* multilearn: optional argument, defaults to False, uses item\_learning\_effect model if True.
-* multiprior: optional argument, defaults to False, uses kt_pps model if True.
-* multipair: optional argument, defaults to False, uses item\_order\_effect model if True.
+* multiguess: defaults to False, uses kt_idem model if True. 
+* multilearn: defaults to False, uses item\_learning\_effect model if True.
+* multiprior: defaults to False, uses kt_pps model if True.
+* multipair: defaults to False, uses item\_order\_effect model if True.
 
 
 ### crossvalidate.crossvalidate(data, folds=5, verbose=False, seed=0)

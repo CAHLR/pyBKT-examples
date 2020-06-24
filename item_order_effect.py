@@ -6,7 +6,7 @@ from pyBKT.generate import synthetic_data, random_model_uni
 from pyBKT.fit import EM_fit
 from utils import data_helper, check_data
 np.seterr(divide='ignore', invalid='ignore')
-skill_name = "Identifying units"
+skill_name = "Finding the intersection, Mixed"
 
 #data!
 data = data_helper.convert_data("ct.csv", skill_name, multipair=True)
