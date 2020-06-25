@@ -7,9 +7,9 @@ from utils import data_helper, check_data
 np.seterr(divide='ignore', invalid='ignore')
 
 num_fit_initializations = 20
-skill_name = "Table"
+skill_name = "Plot pi"
 
-data = data_helper.convert_data("as.csv", skill_name, multiguess=True)
+data = data_helper.convert_data("ct.csv", skill_name, multiguess=True)
 check_data.check_data(data)
 num_learns = len(data["resource_names"])
 num_gs = len(data["gs_names"])
