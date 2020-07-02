@@ -36,7 +36,7 @@ for skill in range(skill_count):
             best_model = fitmodel
     
     (correct_predictions, state_predictions) = predict_onestep.run(best_model, test_data[skill])
-    if len(set(test_data[skill]["data"]) > 1):#auc only calculated when there are 2+ classifiers
+    if len(np.unique(test_data[skill]["data"]) > 1):#auc only calculated when there are 2+ classifiers
         curr_auc = auc.compute_auc(test_data[skill]["data"], correct_predictions, False)
         print("Skill %s of %s calculation completed with AUC of %.4f" % (skill, skill_count, curr_auc))
         total_auc += curr_auc * len(test_data[skill]["resources"])
