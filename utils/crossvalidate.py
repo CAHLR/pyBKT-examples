@@ -3,7 +3,7 @@ sys.path.append('../')
 import numpy as np
 from pyBKT.generate import synthetic_data, random_model_uni
 from pyBKT.fit import EM_fit, predict_onestep
-from utils import accuracy, rmse, check_data
+from utils import accuracy, rmse, check_data, auc
 from copy import deepcopy
 
 # returns data only for the indices given based on starts array
@@ -36,6 +36,7 @@ def crossvalidate(data, folds=5, verbose=False, seed=0):
     num_gs = len(data["gs_names"])
     total = 0
     acc = 0
+    area_under_curve = 0
     num_fit_initializations = 20
     split_size = (len(data["starts"])//folds)
     #create random permutation to act as indices for folds for crossvalidation
@@ -77,7 +78,9 @@ def crossvalidate(data, folds=5, verbose=False, seed=0):
         (correct_predictions, state_predictions) = predict_onestep.run(best_model, test_data)
         total += rmse.compute_rmse(test_data["data"], correct_predictions, verbose)
         acc += accuracy.compute_acc(test_data["data"], correct_predictions, verbose)
+        area_under_curve += auc.compute_auc(test_data["data"], correct_predictions, verbose)
     if verbose:
         print("Average RMSE: ", total/folds)
         print("Average Accuracy: ", acc/folds)
+        print("Average AUC: ", area_under_curve/folds)
     return (acc/folds, total/folds)

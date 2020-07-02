@@ -8,7 +8,7 @@ from copy import deepcopy
 np.seterr(divide='ignore', invalid='ignore')
 
 num_fit_initializations = 20
-skill_name = "Box and Whisker"
+skill_name = "Range"
 
 #data!
 data = data_helper.convert_data("as.csv", skill_name)
