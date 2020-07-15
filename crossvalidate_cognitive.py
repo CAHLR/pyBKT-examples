@@ -9,7 +9,11 @@ from utils import crossvalidate, accuracy, rmse, auc, check_data, data_helper
 import copy
 np.seterr(divide='ignore', invalid='ignore')
 num_fit_initializations = 20
+<<<<<<< HEAD
 skill_name = "Finding the intersection, GLF"
+=======
+skill_name = "Finding the intersection, SIF"
+>>>>>>> c2af53da9b2a24de63b0aa6a34b616f2f8389c2f
 seed, folds = 2020, 5 #can customize to anything, keep same seed and # folds over all trials
 results = {} #create dictionary to store accuracy and rmse results
 

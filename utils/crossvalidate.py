@@ -77,6 +77,7 @@ def crossvalidate(data, folds=5, verbose=False, seed=0):
         test_data = fix_data(data, test)
         # run model predictions from training data on test data
         (correct_predictions, state_predictions) = predict_onestep.run(best_model, test_data)
+<<<<<<< HEAD
         
         flat_true_values = np.zeros((len(test_data["data"][0]),), dtype=np.intc)
         for i in range(len(test_data["data"])):
@@ -96,3 +97,13 @@ def crossvalidate(data, folds=5, verbose=False, seed=0):
         print("Average Accuracy: ", acc)
         print("Average AUC: ", area_under_curve)
     return (acc, total, area_under_curve)
+=======
+        total += rmse.compute_rmse(test_data["data"], correct_predictions, verbose)
+        acc += accuracy.compute_acc(test_data["data"], correct_predictions, verbose)
+        #area_under_curve += auc.compute_auc(test_data["data"], correct_predictions, verbose)
+    if verbose:
+        print("Average RMSE: ", total/folds)
+        print("Average Accuracy: ", acc/folds)
+        #print("Average AUC: ", area_under_curve/folds)
+    return (acc/folds, total/folds)
+>>>>>>> c2af53da9b2a24de63b0aa6a34b616f2f8389c2f
