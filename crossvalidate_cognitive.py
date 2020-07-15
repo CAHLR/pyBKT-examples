@@ -9,7 +9,7 @@ from utils import crossvalidate, accuracy, rmse, check_data, data_helper
 import copy
 np.seterr(divide='ignore', invalid='ignore')
 num_fit_initializations = 20
-skill_name = "Plot pi"
+skill_name = "Finding the intersection, SIF"
 seed, folds = 2020, 5 #can customize to anything, keep same seed and # folds over all trials
 results = {} #create dictionary to store accuracy and rmse results
 
