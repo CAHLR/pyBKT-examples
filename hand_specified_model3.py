@@ -4,6 +4,7 @@ import numpy as np
 from pyBKT.generate import synthetic_data, random_model_uni
 from pyBKT.fit import EM_fit
 from copy import deepcopy
+
 #parameters classes
 num_gs = 1 #number of guess/slip classes
 num_learns = 1 #number of learning rates
@@ -37,21 +38,21 @@ truemodel["slips"] = np.full(num_gs, p_S, dtype=np.float_)
 
 #data!
 print("generating data...")
-observation_sequence_lengths = np.full(500, 100, dtype=np.int) #specifies 500 students with 100 observations for synthetic data
+observation_sequence_lengths = np.full(5000, 1000, dtype=np.int) #specifies 500 students with 100 observations for synthetic data
 data = synthetic_data.synthetic_data(truemodel, observation_sequence_lengths)
 
 #fit models, starting with random initializations
 print('fitting! each dot is a new EM initialization')
 
-num_fit_initializations = 5
+num_fit_initializations = 20
 best_likelihood = float("-inf")
 
 for i in range(num_fit_initializations):
-	fitmodel = random_model_uni.random_model_uni(num_learns, num_gs) # include this line to randomly set initial param values
-	(fitmodel, log_likelihoods) = EM_fit.EM_fit(fitmodel, data, 0);
-	if(log_likelihoods[-1] > best_likelihood):
-		best_likelihood = log_likelihoods[-1]
-		best_model = fitmodel
+    fitmodel = random_model_uni.random_model_uni(num_learns, num_gs) # include this line to randomly set initial param values
+    (fitmodel, log_likelihoods) = EM_fit.EM_fit(fitmodel, data)
+    if(log_likelihoods[-1] > best_likelihood):
+        best_likelihood = log_likelihoods[-1]
+        best_model = fitmodel
 
 # compare the fit model to the true model
 

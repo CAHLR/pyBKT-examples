@@ -15,7 +15,7 @@ check_data.check_data(data)
 num_learns = len(data["resource_names"])
 num_gs = len(data["gs_names"])
 num_fit_initializations = 5
-best_likelihood = float("-inf")
+best_likelihood = float("-inf") 
 
 for i in range(num_fit_initializations):
 	fitmodel = random_model_uni.random_model_uni(num_learns, num_gs) # include this line to randomly set initial param values

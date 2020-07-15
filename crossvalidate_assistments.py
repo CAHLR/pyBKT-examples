@@ -6,7 +6,7 @@ sys.path.append('../')
 import numpy as np
 from pyBKT.generate import synthetic_data, random_model_uni
 from pyBKT.fit import EM_fit
-from utils import crossvalidate, accuracy, rmse, check_data, data_helper
+from utils import crossvalidate, accuracy, rmse, auc, check_data, data_helper
 import copy
 np.seterr(divide='ignore', invalid='ignore')
 num_fit_initializations = 20
@@ -27,7 +27,10 @@ if np.sum(data["data"][0]) - len(data["data"][0]) > len(data["data"][0]) - (np.s
     majority = 1
 pred_values = np.zeros((len(data["data"][0]),))
 pred_values.fill(majority)
-results["Majority Class"] = (accuracy.compute_acc(data["data"],pred_values,False), rmse.compute_rmse(data["data"],pred_values,False))
+true_values = data["data"][0].tolist()
+pred_values = pred_values.tolist()
+results["Majority Class"] = (accuracy.compute_acc(true_values,pred_values,False), rmse.compute_rmse(true_values,pred_values,False), auc.compute_auc(true_values, pred_values, False))
+
 
 print("starting item_learning_effect data collection")
 data_multilearn = data_helper.convert_data("as.csv", skill_name, df=df, multilearn=True)
@@ -54,6 +57,6 @@ print("creating kt_pps model")
 results["Multiprior"] = crossvalidate.crossvalidate(data_multiprior, folds=folds, seed=seed)
 
 results = {k: v for k, v in sorted(results.items(), key=lambda item: -item[1][0])}
-print("Model\t\tAccuracy\tRMSE")
+print("Model\t\tAccuracy\tRMSE\t\tAUC")
 for k, v in results.items():
-    print("%s\t%.5f\t\t%.5f" % (k, v[0], v[1]))
+    print("%s\t%.5f\t\t%.5f\t\t%.5f" % (k, v[0], v[1], v[2]))

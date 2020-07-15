@@ -41,6 +41,7 @@ def crossvalidate(data, folds=5, verbose=False, seed=0):
     split_size = (len(data["starts"])//folds)
     #create random permutation to act as indices for folds for crossvalidation
     shuffle = np.random.RandomState(seed=seed).permutation(len(data["starts"]))
+    all_true, all_pred = [], []
 
     # crossvalidation on students which are identified by the starts array
     for iteration in range(folds):
@@ -76,11 +77,22 @@ def crossvalidate(data, folds=5, verbose=False, seed=0):
         test_data = fix_data(data, test)
         # run model predictions from training data on test data
         (correct_predictions, state_predictions) = predict_onestep.run(best_model, test_data)
-        total += rmse.compute_rmse(test_data["data"], correct_predictions, verbose)
-        acc += accuracy.compute_acc(test_data["data"], correct_predictions, verbose)
-        area_under_curve += auc.compute_auc(test_data["data"], correct_predictions, verbose)
+        
+        flat_true_values = np.zeros((len(test_data["data"][0]),), dtype=np.intc)
+        for i in range(len(test_data["data"])):
+            for j in range(len(test_data["data"][0])):
+                if test_data["data"][i][j] != 0:
+                    flat_true_values[j] = test_data["data"][i][j]
+        flat_true_values = flat_true_values.tolist()
+        all_true.extend(flat_true_values)
+        #print(correct_predictions)
+        all_pred.extend(correct_predictions)
+        
+    total += rmse.compute_rmse(all_true, all_pred, False)
+    acc += accuracy.compute_acc(all_true, all_pred, False)
+    area_under_curve += auc.compute_auc(all_true, all_pred, False)
     if verbose:
-        print("Average RMSE: ", total/folds)
-        print("Average Accuracy: ", acc/folds)
-        print("Average AUC: ", area_under_curve/folds)
-    return (acc/folds, total/folds)
+        print("Average RMSE: ", total)
+        print("Average Accuracy: ", acc)
+        print("Average AUC: ", area_under_curve)
+    return (acc, total, area_under_curve)
