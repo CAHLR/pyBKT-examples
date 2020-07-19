@@ -6,12 +6,15 @@ import numpy as np
 import io
 import requests
 
-def convert_data(url, skill_name, df=None, return_df=False, defaults=None, multilearn=False, multiguess=False, multipair=False, multiprior=False):
+def convert_data(url, skill_name, return_df=False, defaults=None, multilearn=False, multiguess=False, multipair=False, multiprior=False):
   pd.set_option('mode.chained_assignment', None)
   print("Skill: "+skill_name)
-  # dataframe to retrieve and store data
+  df = None
+
   
-  if df is None:
+  if isinstance(url, pd.DataFrame):
+    df = url
+  else:
     # save string only after last slash for file name
     urltofile = url.rsplit('/', 1)[-1]
   

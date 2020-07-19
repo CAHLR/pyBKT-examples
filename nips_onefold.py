@@ -24,6 +24,8 @@ print("All data okay")
 
 total_auc = 0
 total_trials = 0
+all_true = []
+all_pred = []
 for skill in range(skill_count):
     num_fit_initializations = 5
     best_likelihood = float("-inf")
@@ -38,15 +40,19 @@ for skill in range(skill_count):
                 best_likelihood = log_likelihoods[-1]
                 best_model = fitmodel
         
-        if len(test_data[skill]["resources"]) > 1 and len(np.unique(test_data[skill]["data"])) > 1:#auc only calculated when there are 2+ classifiers
+        if len(test_data[skill]["resources"]) > 0:
             (correct_predictions, state_predictions) = predict_onestep.run(best_model, test_data[skill])
-            curr_auc = auc.compute_auc(test_data[skill]["data"], correct_predictions, False)
+            if len(np.unique(test_data[skill]["data"])) > 1:#auc for single skill only calculated when there are 2+ classifiers
+                curr_auc = auc.compute_auc(test_data[skill]["data"][0], correct_predictions)
+            else:
+                curr_auc = 0
+        
+            all_true.extend(test_data[skill]["data"][0])
+            all_pred.extend(correct_predictions)
             print("Skill %s of %s calculation completed with AUC of %.4f" % (skill, skill_count, curr_auc))
-            total_auc += curr_auc * len(test_data[skill]["resources"])
-            total_trials += len(test_data[skill]["resources"])
         else:
             print("No test data for skill %s" % skill)
-total_auc /= total_trials
+total_auc = auc.compute_auc(all_true, all_pred)
 print("Overall AUC:", total_auc)
 #specifying verbose allows data from all iterations of crossvalidation to be printed out
 #crossvalidate.crossvalidate(data, verbose=True)

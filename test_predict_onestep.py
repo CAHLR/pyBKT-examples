@@ -31,6 +31,7 @@ data = synthetic_data.synthetic_data(truemodel, observation_sequence_lengths)
 
 (correct_predictions, state_predictions) = predict_onestep.run(truemodel, data)
 
-print(correct_predictions, state_predictions)
+print(correct_predictions)
+print(state_predictions)
 
 print("finishing...")

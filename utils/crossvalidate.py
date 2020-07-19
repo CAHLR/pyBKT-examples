@@ -13,14 +13,17 @@ def fix_data(data, indices):
     d = [[] for _ in range(len(data["data"]))]
     start_temp = [data["starts"][i] for i in indices]
     length_temp = [data["lengths"][i] for i in indices]
-    training_data["resource_names"] = data["resource_names"]
-    training_data["gs_names"] = data["gs_names"]
+    if "resource_names" in data:
+        training_data["resource_names"] = data["resource_names"]
+    if "gs_names" in data:
+        training_data["gs_names"] = data["gs_names"]
     starts = []
     for i in range(len(start_temp)):
         starts.append(len(resources)+1)
-        resources.extend(data["resources"][start_temp[i]:start_temp[i]+length_temp[i]])
+        #print("A", start_temp[i], start_temp[i]+length_temp[i])
+        resources.extend(data["resources"][start_temp[i]-1:start_temp[i]+length_temp[i]-1])
         for j in range(len(data["data"])):
-            d[j].extend(data["data"][j][start_temp[i]:start_temp[i]+length_temp[i]])
+            d[j].extend(data["data"][j][start_temp[i]-1:start_temp[i]+length_temp[i]-1])
     training_data["starts"] = np.asarray(starts)
     training_data["lengths"] = np.asarray(length_temp)
     training_data["data"] = np.asarray(d,dtype='int32')
@@ -31,9 +34,18 @@ def fix_data(data, indices):
     training_data=(training_data)
     return training_data
 
-def crossvalidate(data, folds=5, verbose=False, seed=0):
-    num_learns = len(data["resource_names"])
-    num_gs = len(data["gs_names"])
+def crossvalidate(data, folds=5, verbose=False, seed=0, return_arrays=False):
+
+    if "resource_names" in data:
+        num_learns = len(data["resource_names"])
+    else:
+        num_learns = 1
+        
+    if "gs_names" in data:
+        num_gs = len(data["gs_names"])
+    else:
+        num_gs = 1
+        
     total = 0
     acc = 0
     area_under_curve = 0
@@ -51,7 +63,7 @@ def crossvalidate(data, folds=5, verbose=False, seed=0):
         training_data = fix_data(data, train)
         num_fit_initializations = 5
         best_likelihood = float("-inf")
-        
+
         for i in range(num_fit_initializations):
         	fitmodel = random_model_uni.random_model_uni(num_learns, num_gs) # include this line to randomly set initial param values
         	(fitmodel, log_likelihoods) = EM_fit.EM_fit(fitmodel, training_data)
@@ -73,11 +85,13 @@ def crossvalidate(data, folds=5, verbose=False, seed=0):
                 print('guess%d\t%.4f' % (s+1, best_model['guesses'][s]))
             for s in range(num_gs):
                 print('slip%d\t%.4f' % (s+1, best_model['slips'][s]))
+                
         
         test_data = fix_data(data, test)
+        
         # run model predictions from training data on test data
         (correct_predictions, state_predictions) = predict_onestep.run(best_model, test_data)
-<<<<<<< HEAD
+        
         
         flat_true_values = np.zeros((len(test_data["data"][0]),), dtype=np.intc)
         for i in range(len(test_data["data"])):
@@ -86,24 +100,18 @@ def crossvalidate(data, folds=5, verbose=False, seed=0):
                     flat_true_values[j] = test_data["data"][i][j]
         flat_true_values = flat_true_values.tolist()
         all_true.extend(flat_true_values)
-        #print(correct_predictions)
         all_pred.extend(correct_predictions)
+
         
-    total += rmse.compute_rmse(all_true, all_pred, False)
-    acc += accuracy.compute_acc(all_true, all_pred, False)
-    area_under_curve += auc.compute_auc(all_true, all_pred, False)
+    if return_arrays:
+        return (all_true, all_pred)
+        
+    total += rmse.compute_rmse(all_true, all_pred)
+    acc += accuracy.compute_acc(all_true, all_pred)
+    area_under_curve += auc.compute_auc(all_true, all_pred)
     if verbose:
         print("Average RMSE: ", total)
         print("Average Accuracy: ", acc)
         print("Average AUC: ", area_under_curve)
     return (acc, total, area_under_curve)
-=======
-        total += rmse.compute_rmse(test_data["data"], correct_predictions, verbose)
-        acc += accuracy.compute_acc(test_data["data"], correct_predictions, verbose)
-        #area_under_curve += auc.compute_auc(test_data["data"], correct_predictions, verbose)
-    if verbose:
-        print("Average RMSE: ", total/folds)
-        print("Average Accuracy: ", acc/folds)
-        #print("Average AUC: ", area_under_curve/folds)
-    return (acc/folds, total/folds)
->>>>>>> c2af53da9b2a24de63b0aa6a34b616f2f8389c2f
+

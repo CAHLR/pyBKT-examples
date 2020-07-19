@@ -9,11 +9,7 @@ from utils import crossvalidate, accuracy, rmse, auc, check_data, data_helper
 import copy
 np.seterr(divide='ignore', invalid='ignore')
 num_fit_initializations = 20
-<<<<<<< HEAD
-skill_name = "Finding the intersection, GLF"
-=======
 skill_name = "Finding the intersection, SIF"
->>>>>>> c2af53da9b2a24de63b0aa6a34b616f2f8389c2f
 seed, folds = 2020, 5 #can customize to anything, keep same seed and # folds over all trials
 results = {} #create dictionary to store accuracy and rmse results
 
@@ -32,30 +28,30 @@ pred_values = np.zeros((len(data["data"][0]),))
 pred_values.fill(majority)
 true_values = data["data"][0].tolist()
 pred_values = pred_values.tolist()
-results["Majority Class"] = (accuracy.compute_acc(true_values,pred_values,False), rmse.compute_rmse(true_values,pred_values,False), auc.compute_auc(true_values, pred_values, False))
+results["Majority Class"] = (accuracy.compute_acc(true_values,pred_values), rmse.compute_rmse(true_values,pred_values), auc.compute_auc(true_values, pred_values))
 
 
 print("starting item_learning_effect data collection")
-data_multilearn = data_helper.convert_data("ct.csv", skill_name, df=df, multilearn=True)
+data_multilearn = data_helper.convert_data(df, skill_name, multilearn=True)
 check_data.check_data(data_multilearn)
 print("creating item_learning_effect model")
 results["Multilearn"] = crossvalidate.crossvalidate(data_multilearn, folds=folds, seed=seed)
 
 print("starting kt_idem data collection")
-data_multiguess = data_helper.convert_data("ct.csv", skill_name, df=df, multiguess=True)
+data_multiguess = data_helper.convert_data(df, skill_name, multiguess=True)
 check_data.check_data(data_multiguess)
 print("creating kt_idem model")
 results["Multiguess"] = crossvalidate.crossvalidate(data_multiguess, folds=folds, seed=seed)
 
 print("starting item_order_effect data collection")
-data_multipair = data_helper.convert_data("ct.csv", skill_name, df=df, multipair=True)
+data_multipair = data_helper.convert_data(df, skill_name, multipair=True)
 check_data.check_data(data_multipair)
 print("creating item_order_effect model")
 results["Multipair"] = crossvalidate.crossvalidate(data_multipair, folds=folds, seed=seed)
 
 
 print("starting kt_pps model data collection")
-data_multiprior = data_helper.convert_data("ct.csv", skill_name, df=df, multiprior=True)
+data_multiprior = data_helper.convert_data(df, skill_name, multiprior=True)
 check_data.check_data(data_multiprior)
 print("creating kt_pps model")
 results["Multiprior"] = crossvalidate.crossvalidate(data_multiprior, folds=folds, seed=seed)

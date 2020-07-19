@@ -38,7 +38,7 @@ truemodel["slips"] = np.full(num_gs, p_S, dtype=np.float_)
 
 #data!
 print("generating data...")
-observation_sequence_lengths = np.full(5000, 1000, dtype=np.int) #specifies 500 students with 100 observations for synthetic data
+observation_sequence_lengths = np.full(500, 100, dtype=np.int) #specifies 500 students with 100 observations for synthetic data
 data = synthetic_data.synthetic_data(truemodel, observation_sequence_lengths)
 
 #fit models, starting with random initializations

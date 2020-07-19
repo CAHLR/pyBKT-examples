@@ -6,20 +6,27 @@ import numpy as np
 import io
 import requests
 
-def convert_data(url):
+def convert_data(url, url2=None):
     pd.set_option('mode.chained_assignment', None)
     skill_count = 124 #hard coded to fit preprocessed data
     col_count = 8214 #hard coded to fit preprocessed data
     if os.path.exists("data/"+url):
         f = open("data/" + url, "rb")
         df = pd.read_csv(io.StringIO(f.read().decode('latin')), low_memory=False, delimiter = ',', header=None, names=[i for i in range(col_count)])
+        
+    if url2 is not None:
+        if os.path.exists("data/"+url):
+            f = open("data/" + url, "rb")
+            df2 = pd.read_csv(io.StringIO(f.read().decode('latin')), low_memory=False, delimiter = ',', header=None, names=[i for i in range(col_count)])
+            frames = [df, df2]
+            df = pd.concat(frames)
 
     resource=[[] for i in range(skill_count)]
     starts=[[] for i in range(skill_count)]
     lengths=[[] for i in range(skill_count)]
     data=[[] for i in range(skill_count)]
     
-    #code to find max number of columns needed for a single row (8214)
+    #code to find max number of columns needed for a single row (8214 in this case)
     #max_len = 0
     #for i in range(len(df)//3):
     #    ind = i*3
@@ -63,25 +70,3 @@ def convert_data(url):
         stateseqs=np.copy(resource[i])
         Data[i]["stateseqs"] = np.asarray([stateseqs],dtype='int32')
     return Data
-    
-        
-            
-    
-        
-    
-        
-  #resource=np.asarray(resources)
-  #stateseqs=np.copy(resource)
-  #Data["stateseqs"]=np.asarray([stateseqs],dtype='int32')
-  #Data["starts"]=np.asarray(starts)
-  #Data["lengths"]=np.asarray(lengths)
-  #Data["resources"]=resource
-  #Data["resource_names"]=resource_ref
-  #Data["gs_names"]=gs_ref
-
-  #if return_df:
-  #  return (Data), df
-  #return (Data)
-  
- 
-
