@@ -54,5 +54,3 @@ for skill in range(skill_count):
             print("No test data for skill %s" % skill)
 total_auc = auc.compute_auc(all_true, all_pred)
 print("Overall AUC:", total_auc)
-#specifying verbose allows data from all iterations of crossvalidation to be printed out
-#crossvalidate.crossvalidate(data, verbose=True)

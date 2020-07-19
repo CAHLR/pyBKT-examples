@@ -23,21 +23,14 @@ print("All data okay")
 all_true=[]
 all_pred=[]
 for skill in range(skill_count):
-    #print("A")
-    #print(Data[skill]["starts"])
-    #print(Data[skill]["lengths"])
-    #print(len(Data[skill]["resources"]))
+
     if len(Data[skill]["resources"]) < 5:#auc only calculated when there are 2+ classifiers
         print("Not enough data for skill %s" % skill)
         continue
-    #print(Data[skill]["starts"])
-    #print(Data[skill]["lengths"])#
-    #print(Data[skill]["data"].shape)
+
     temp = crossvalidate.crossvalidate(Data[skill], verbose=False, return_arrays=True)
     print("Skill %s of %s calculation completed" % (skill, skill_count-1))
     all_true.extend(temp[0])
     all_pred.extend(temp[1])
 total_auc = auc.compute_auc(all_true, all_pred)
 print("Overall AUC:", total_auc)
-#specifying verbose allows data from all iterations of crossvalidation to be printed out
-#crossvalidate.crossvalidate(data, verbose=True)
