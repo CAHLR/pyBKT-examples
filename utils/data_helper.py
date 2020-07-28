@@ -134,8 +134,8 @@ def convert_data(url, skill_name, return_df=False, defaults=None, multilearn=Fal
     # create phantom timeslices with resource 2 or 3 in front of each new student based on their initial response
     for i in range(len(starts)):
       starts[i] += i
-      data.insert(starts[i], 0)
-      resources.insert(starts[i], resource_ref[df3[i:i+1][defaults["multiprior"]].values[0]])
+      data.insert(starts[i]-1, 0)
+      resources.insert(starts[i]-1, resource_ref[df3[i:i+1][defaults["multiprior"]].values[0]])
       lengths[i] += 1
   elif multilearn:
     # map each new resource found to a number [1, # total]
@@ -156,7 +156,7 @@ def convert_data(url, skill_name, return_df=False, defaults=None, multilearn=Fal
       for j in range(len(gs_ref)):
         if gs_ref[i[defaults["multiguess"]]] == j:
             data_temp[j].append(data[counter])
-            counter += 1
+            counter += 1 
         else:
             data_temp[j].append(0)
     Data["data"]=np.asarray(data_temp,dtype='int32')
@@ -180,7 +180,7 @@ def convert_data(url, skill_name, return_df=False, defaults=None, multilearn=Fal
   Data["gs_names"]=gs_ref
 
   if return_df:
-    return (Data), df
+    return (Data), df 
   return (Data)
   
  
