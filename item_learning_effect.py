@@ -18,11 +18,12 @@ num_fit_initializations = 5
 best_likelihood = float("-inf")
 
 for i in range(num_fit_initializations):
-	fitmodel = random_model_uni.random_model_uni(num_learns, num_gs) # include this line to randomly set initial param values
-	(fitmodel, log_likelihoods) = EM_fit.EM_fit(fitmodel, data)
-	if(log_likelihoods[-1] > best_likelihood):
-		best_likelihood = log_likelihoods[-1]
-		best_model = fitmodel
+    fitmodel = random_model_uni.random_model_uni(num_learns, num_gs) # include this line to randomly set initial param values
+    (fitmodel, log_likelihoods) = EM_fit.EM_fit(fitmodel, data)
+    print(log_likelihoods[-1])
+    if(log_likelihoods[-1] > best_likelihood):
+        best_likelihood = log_likelihoods[-1]
+        best_model = fitmodel
 
 # compare the fit model to the true model
 print('')

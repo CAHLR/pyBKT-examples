@@ -39,7 +39,20 @@ for skill in range(skill_count):
             if(log_likelihoods[-1] > best_likelihood):
                 best_likelihood = log_likelihoods[-1]
                 best_model = fitmodel
-        
+                
+        #print(" ")
+        #print('\tlearned')
+        #print('prior\t%.4f' % (best_model["pi_0"][1][0]))
+        #for r in range(1):
+        #    print('learn%d\t%.4f' % (r+1, best_model['As'][r, 1, 0].squeeze()))
+        #for r in range(1):
+        #    print('forget%d\t%.4f' % (r+1, best_model['As'][r, 0, 1].squeeze()))
+          
+        #for s in range(1):
+        #    print('guess%d\t%.4f' % (s+1, best_model['guesses'][s]))
+        #for s in range(1):
+        #    print('slip%d\t%.4f' % (s+1, best_model['slips'][s]))
+
         if len(test_data[skill]["resources"]) > 0:
             (correct_predictions, state_predictions) = predict_onestep.run(best_model, test_data[skill])
             if len(np.unique(test_data[skill]["data"])) > 1:#auc for single skill only calculated when there are 2+ classifiers

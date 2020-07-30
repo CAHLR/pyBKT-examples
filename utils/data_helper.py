@@ -47,7 +47,7 @@ def convert_data(url, skill_name, return_df=False, defaults=None, multilearn=Fal
                        'multilearn': 'answer_type',
                        'multiprior': 'correct',
                        'multipair': 'problem_id',
-                       'multiguess': 'problem_id',
+                       'multiguess': 'template_id',
                        }
 
   # default column names for cognitive tutors
