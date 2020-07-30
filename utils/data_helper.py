@@ -76,9 +76,13 @@ def convert_data(url, skill_name, return_df=False, defaults=None, multilearn=Fal
   # sort by the order in which the problems were answered
   df[defaults["order_id"]] = [int(i) for i in df[defaults["order_id"]]]
   df.sort_values(defaults["order_id"], inplace=True)
-
+  
+  if "original" in df.columns:
+    df = df[(df["original"]==1)]
+  
   # filter out based on skill
   skill = df[(df[defaults["skill_name"]]==skill_name)]
+  
 
   # convert from 0=incorrect,1=correct to 1=incorrect,2=correct
   skill.loc[:,defaults["correct"]]+=1
