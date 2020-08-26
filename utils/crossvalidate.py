@@ -92,13 +92,16 @@ def crossvalidate(data, folds=5, verbose=False, seed=0, return_arrays=False):
         # run model predictions from training data on test data
         (correct_predictions, state_predictions) = predict_onestep.run(best_model, test_data)
         
-        
         flat_true_values = np.zeros((len(test_data["data"][0]),), dtype=np.intc)
         for i in range(len(test_data["data"])):
             for j in range(len(test_data["data"][0])):
                 if test_data["data"][i][j] != 0:
                     flat_true_values[j] = test_data["data"][i][j]
         flat_true_values = flat_true_values.tolist()
+        
+       # print(len(flat_true_values))
+       # print(len(correct_predictions))
+       # print(auc.compute_auc(flat_true_values, correct_predictions))
         all_true.extend(flat_true_values)
         all_pred.extend(correct_predictions)
 
@@ -106,6 +109,8 @@ def crossvalidate(data, folds=5, verbose=False, seed=0, return_arrays=False):
     if return_arrays:
         return (all_true, all_pred)
         
+   # print(len(all_true))
+    print(len(all_pred))
     total += rmse.compute_rmse(all_true, all_pred)
     acc += accuracy.compute_acc(all_true, all_pred)
     area_under_curve += auc.compute_auc(all_true, all_pred)

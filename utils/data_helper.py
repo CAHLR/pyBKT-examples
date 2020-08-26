@@ -89,7 +89,7 @@ def convert_data(url, skill_name, return_df=False, defaults=None, multilearn=Fal
   
   # filter out garbage
   df3=skill[skill[defaults["correct"]]!=3]
-
+  
   # array representing correctness of student answers
   data=df3[defaults["correct"]].tolist()
   

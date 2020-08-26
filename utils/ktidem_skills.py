@@ -1,4 +1,4 @@
-#script to find the 10 skills with the most data in assistments, referencing the kt-idem paper
+#script to find the 10 skills with the most data in assistments for the SKILL BUILDER DATA SET, referencing the kt-idem paper
 import sys
 sys.path.append('../')
 import os
@@ -25,13 +25,28 @@ def find_skills():
             
     df = df[(df["original"]==1)]
 
-    skill_list = df['skill_name'].value_counts()[:10].index.tolist()
-    
+    #skill_list = df['skill_name'].value_counts()[:10].index.tolist()
+    skill_list = [
+    "Percent Of",
+    "Addition and Subtraction Integers",
+    "Conversion of Fraction Decimals Percents",
+    "Volume Rectangular Prism",
+    "Venn Diagram",
+    "Equation Solving Two or Fewer Steps",
+    "Volume Cylinder",
+    "Multiplication and Division Integers",
+    "Area Rectangle",
+    "Addition and Subtraction Fractions",
+    ]
     student_count = []
+    data_count = []
+    template_count = []
     for i in skill_list:
         df_temp = df[(df["skill_name"] == i)]
         student_count.append(df_temp["user_id"].nunique())
-    return df, skill_list, student_count
+        data_count.append(len(df_temp))
+        template_count.append(df_temp["template_id"].nunique())
+    return df, skill_list, student_count, data_count, template_count
 #for i in skill_list:
 #    df_temp = df[(df["skill_name"] == i)]
 #    print("# students for skill", i, ":", df_temp["user_id"].nunique())#

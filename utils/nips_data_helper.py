@@ -50,9 +50,13 @@ def convert_data(url, url2=None):
             if skill == prev_skill:
                 consecutive += 1
             else:
-                lengths[prev_skill].append(consecutive)
+                if consecutive == 1:
+                    data[prev_skill] = data[prev_skill][:-1]
+                else:
+                    lengths[prev_skill].append(consecutive)
                 prev_skill = skill
                 consecutive = 1
+        
         lengths[prev_skill].append(consecutive)
         
     for i in range(skill_count):
