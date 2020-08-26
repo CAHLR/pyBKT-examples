@@ -1,3 +1,5 @@
+#NOTE THAT THE COGNITIVE TUTOR BRIDGE TO ALGEBRA DATASET IS NOT INCLUDED IN THIS REPOSITORY, AS IT IS 1 GIGABYTE LARGE. IT CAN BE DOWNLOADED AT https://pslcdatashop.web.cmu.edu/KDDCup/downloads.jsp
+
 import sys
 sys.path.append('../')
 import numpy as np
