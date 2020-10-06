@@ -110,7 +110,7 @@ def crossvalidate(data, folds=5, verbose=False, seed=0, return_arrays=False):
         return (all_true, all_pred)
         
    # print(len(all_true))
-    print(len(all_pred))
+    # print(len(all_pred))
     total += rmse.compute_rmse(all_true, all_pred)
     acc += accuracy.compute_acc(all_true, all_pred)
     area_under_curve += auc.compute_auc(all_true, all_pred)
