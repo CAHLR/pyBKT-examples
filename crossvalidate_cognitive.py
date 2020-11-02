@@ -30,7 +30,6 @@ true_values = data["data"][0].tolist()
 pred_values = pred_values.tolist()
 results["Majority Class"] = (accuracy.compute_acc(true_values,pred_values), rmse.compute_rmse(true_values,pred_values), auc.compute_auc(true_values, pred_values))
 
-
 print("starting item_learning_effect data collection")
 data_multilearn = data_helper.convert_data(df, skill_name, multilearn=True)
 check_data.check_data(data_multilearn)
@@ -48,7 +47,6 @@ data_multipair = data_helper.convert_data(df, skill_name, multipair=True)
 check_data.check_data(data_multipair)
 print("creating item_order_effect model")
 results["Multipair"] = crossvalidate.crossvalidate(data_multipair, folds=folds, seed=seed)
-
 
 print("starting kt_pps model data collection")
 data_multiprior = data_helper.convert_data(df, skill_name, multiprior=True)

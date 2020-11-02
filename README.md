@@ -45,7 +45,7 @@ Predicts the probability of at each timestep of the student answering the questi
 Sees how well the model performs when data is generated using specified parameters.
 
 # Utility Functions
-### data\_helper.convert\_data(url, skill\_name, df=None, return_df=False,  defaults=None, multiguess=False, multilearn=False, multiprior=False, multipair=False)
+### data\_helper.convert\_data(url, skill\_name, return_df=False,  defaults=None, multiguess=False, multilearn=False, multiprior=False, multipair=False)
 Converts a given csv or txt file into a data structure that can be passed into pyBKT's modeling and utility functions such as EM\_Fit, crossvalidate, and predict\_one\_step.
 
 **Parameters:**
@@ -73,8 +73,14 @@ Converts data in the format of that provided by https://github.com/chrispiech/De
 * URL: a local filepath to read data from in csv format (specific data located in data/builder_train.csv and data/builder_test.csv)
 * URL2: another local filepath in the format of URL, used to join the data provided by URL and URL2 into a single data structure in order to perform crossvalidation on the complete data set.
 
+### ktpps_data_helper.convert_data(url, url2=None)
+Converts data in the format of that provided by Pardos' "Modeling individualization in a bayesian networks implementation of knowledge tracing" into a data structure that can be passed into pyBKT's functions.
+
+**Parameters:**
+* URL: a local filepath to read data from in csv format (specific data located in data/builder_train.csv and data/builder_test.csv)
+
 ### crossvalidate.crossvalidate(data, folds=5, verbose=False, seed=0, return_arrays=False)
-Performs crossvalidation on data, returning a tuple containing accuracy and RMSE.
+Performs crossvalidation on data, returning a tuple containing accuracy, RMSE, and AUC. Also returns the predicted responses as an array if return_arrays is true. 
 
 **Parameters:**
 * data: input data, in the format of that returned by data\_helper.convert\_data.

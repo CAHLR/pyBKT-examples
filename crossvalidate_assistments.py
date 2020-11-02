@@ -45,7 +45,7 @@ print("creating kt_idem model")
 results["Multiguess"] = crossvalidate.crossvalidate(data_multiguess, folds=folds, seed=seed)
 
 print("starting item_order_effect data collection")
-data_multipair = data_helper.convert_data("as.csv", skill_name, df=df, multipair=True)
+data_multipair = data_helper.convert_data(df, skill_name, multipair=True)
 check_data.check_data(data_multipair)
 print("creating item_order_effect model")
 results["Multipair"] = crossvalidate.crossvalidate(data_multipair, folds=folds, seed=seed)

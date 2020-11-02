@@ -44,7 +44,7 @@ def convert_data(url, skill_name, return_df=False, defaults=None, multilearn=Fal
                        'skill_name': 'skill_name',
                        'correct': 'correct',
                        'user_id': 'user_id',
-                       'multilearn': 'answer_type',
+                       'multilearn': 'template_id',
                        'multiprior': 'correct',
                        'multipair': 'problem_id',
                        'multiguess': 'template_id',
