@@ -77,7 +77,7 @@ Converts data in the format of that provided by https://github.com/chrispiech/De
 Converts data in the format of that provided by Pardos' "Modeling individualization in a bayesian networks implementation of knowledge tracing" into a data structure that can be passed into pyBKT's functions.
 
 **Parameters:**
-* URL: a local filepath to read data from in csv format (specific data located in data/builder_train.csv and data/builder_test.csv)
+* URL: a local filepath to read data from in csv format (specific data located in data/glops-exact)
 
 ### crossvalidate.crossvalidate(data, folds=5, verbose=False, seed=0, return_arrays=False)
 Performs crossvalidation on data, returning a tuple containing accuracy, RMSE, and AUC. Also returns the predicted responses as an array if return_arrays is true. 
