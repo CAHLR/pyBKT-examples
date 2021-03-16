@@ -67,17 +67,17 @@ When running the Prior Per Student model on Pardos' 42 Problem Sets GLOPs data s
 In general, the larger the difference of the learned priors, the more successful the model is in predicting, while small differences perform very similarly to the basic BKT model. Thus, while this model performs well on this specific GLOPs data set, it also generally leads to unimpressive results, those of which are similar to regular BKT, on publicly released ASSISTments and Cognitive Tutor data as the priors for the majority of skills are already very high. Thus, differences of first responses are likely to be attributed to mostly slip errors rather than individual prior knowledge.
 
 ## Item Order Effect (ItemOrderEffect.py)
-|     First Class     |  30041 |  30046 |  30304 |  30328 |  52495 |  52497 |
-|     Second Class    |  30046 |  30041 |  30328 |  30304 |  52497 |  52495 |
+|     Template Pair     |  30041-30046 |  30046-30041 |  30304-30328 |  30328-30304 |  52495-52497 |  52497-52495 |
 |:-------------------:|:------:|:------:|:------:|:------:|:------:|:------:|
 |  Learn Rate  | 0.2242 | 0.1116 | 0.2599 | 0.4274 | 0.2330 | 0.3763 |
+
 Unfortunately, the data set referenced by the Item Order Effect paper [5] is no longer available, so we instead run tests on ASSISTments data using template id as classifiers. ASSISTments data tends to choose from two templates per student, so the item order effect can help us determine which order of templates we should pull problems from. Running the model on the Venn Diagram skill, we can see that certain orderings of templates result in much greater learning rates of a skill. From the large differences in learn rates stemming from different orderings of templates shown, we can see that it is generally favorable to a student's learning to order problems of template id 30041 before those of template id 30046, problems of template id 30328 before those of template id 30304, and problems of template id 52497 before those of template id 52495. Using five fold cross-validation to calculate RMSE for this model, we achieve an RMSE of 0.295, an improvement from the RMSE of the basic model, which was 0.309.
 
 ## Item Learning Effect (ItemLearningEffect.py)
 
 |     Template ID     |  30041 |  30046 |  30328 |  30304 |  52495 |  52497 |
 |:-------------------:|:------:|:------:|:------:|:------:|:------:|:------:|
-| \textbf{Learn Rate} | 0.5690 | 0.0031 | 0.3897 | 0.1585 | 0.0221 | 0.0048 |
+| Learn Rate | 0.5690 | 0.0031 | 0.3897 | 0.1585 | 0.0221 | 0.0048 |
 
 Similar to the Item Order Effect references, the data sets used in the Item Learning Effect paper [6] are also no longer available. To showcase the potential of the model, we fit the Item Learning Effect Model to the Venn Diagram skill in ASSISTments and observed the calculated learn rates of each template. From the model results, it is clear that template 30041 results in much greater learning compared to template 30046. A similar trend is seen for template 30328 compared to template 30304, and template 52495 compared to template 52497. By predicting student responses using five fold cross-validation and the Item Learning Effect model, we are able to achieve an AUC of 0.295, a similar improvement to that shown using the Item Order Effect model.
 
