@@ -24,16 +24,18 @@ for i in all_files:
         
     print("Creating model for ", i)
     
-    model = Model()
-    bkt_rmse = model.crossvalidate(data_path = "./data/glops-exact-processed/"+i, metric = "rmse", defaults={"skill_name": "skill_id"})["rmse"].values[0]
+    model = Model(num_fits = 20, seed=2020)
+    bkt_rmse = model.crossvalidate(data_path = "./data/glops-exact-processed/"+i, metric = "rmse")["rmse"].values[0]
+    model2 = Model(num_fits = 20, seed=2020)
+    mp_rmse = model2.crossvalidate(data_path = "./data/glops-exact-processed/"+i, multiprior = True, metric = "rmse")["rmse"].values[0]
     print("Standard BKT RMSE:", bkt_rmse)
-    mp_rmse = model.crossvalidate(data_path = "./data/glops-exact-processed/"+i, multiprior = True, metric = "rmse", defaults={"skill_name": "skill_id"})["rmse"].values[0]
     print("PPS RMSE:", mp_rmse)
     
     if bkt_rmse < mp_rmse:
         kt_better += 1
     else:
         pps_better += 1
+        
     
 
 

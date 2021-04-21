@@ -1,3 +1,4 @@
+#preprocesses the builder_train and builder_test datasets
 import sys
 sys.path.append('../')
 import os
@@ -35,11 +36,11 @@ for i in range(len(df)//3):
     print(corrects)
     
     for j in range(int(seq_len) - 1):
-        row = {'user_id': student_id, 'skill_id': int(skill_ids[j]), 'correct': int(corrects[j])}
+        row = {'user_id': student_id, 'skill_name': int(skill_ids[j]), 'correct': int(corrects[j])}
         row_list.append(row)
         
     
 
 df1 = pd.DataFrame(row_list)
 
-df1.to_csv(r'builder_train_preprocessed.csv', index=None, sep=',', mode='a')
+df1.to_csv(r'builder_train_preprocessed.csv', index=None, sep=',')

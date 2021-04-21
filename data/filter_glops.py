@@ -24,7 +24,7 @@ for url in all_files:
         sequence = df[i:i+1].values[0][0].split(" ")
         #print(sequence)
         for j in range(len(sequence)-1):
-            row = {'user_id': sequence[0], 'skill_id': 1, 'correct': sequence[j+1]}
+            row = {'user_id': sequence[0], 'skill_name': 1, 'correct': sequence[j+1]}
             row_list.append(row)
             
     df1 = pd.DataFrame(row_list)
