@@ -1,4 +1,3 @@
-#script to find the 10 skills with the most data in assistments for the SKILL BUILDER DATA SET, referencing the kt-idem paper
 import sys
 sys.path.append('../')
 import os
