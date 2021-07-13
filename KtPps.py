@@ -19,6 +19,8 @@ total_responses = 0
 kt_better = 0
 pps_better = 0
 
+maes = []
+all_files.sort()
 for i in all_files:
     if i == "README.txt" or i == ".DS_Store":
         continue
@@ -59,6 +61,7 @@ for i in all_files:
     mp_mae = sk.mean_absolute_error(y_true, y_pred)
     
     print("Standard BKT MAE:", bkt_mae)
+    maes.append(bkt_mae)
     print("PPS MAE:", mp_mae)
     
     if bkt_mae < mp_mae:
@@ -66,9 +69,8 @@ for i in all_files:
     else:
         pps_better += 1
         
-    
+print(maes)
 
 
 print("PPS performs better in", pps_better, "datasets")
 print("KT performs better in", kt_better, "datasets")
-
