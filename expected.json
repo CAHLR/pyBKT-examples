@@ -1,0 +1,96 @@
+{
+  "tolerance": 0.001,
+  "pybkt_commit": "dddb7be",
+  "scripts": {
+    "BasicForgets": {
+      "source": "Khajah, Lindsey and Mozer 2016, How deep is knowledge tracing?",
+      "pybkt": {
+        "auc_bkt": 0.7593432720879197,
+        "auc_forgets": 0.8246842549662594
+      },
+      "published": {
+        "auc_bkt": 0.73,
+        "auc_forgets": 0.83
+      }
+    },
+    "KtIdem": {
+      "source": "Pardos and Heffernan 2011, KT-IDEM; the paper reports AUC, the script RMSE",
+      "pybkt": {
+        "rmse_bkt": {
+          "Addition and Subtraction Fractions": 0.4216414991833993,
+          "Addition and Subtraction Integers": 0.41069294994884037,
+          "Area Rectangle": 0.14942818442390826,
+          "Conversion of Fraction Decimals Percents": 0.4557183428379908,
+          "Equation Solving Two or Fewer Steps": 0.4562530291991333,
+          "Multiplication and Division Integers": 0.40287568023741044,
+          "Percent Of": 0.3832723845830453,
+          "Venn Diagram": 0.3317292413284597,
+          "Volume Cylinder": 0.29394083104507834,
+          "Volume Rectangular Prism": 0.23370665494109466
+        },
+        "rmse_idem": {
+          "Addition and Subtraction Fractions": 0.4151604664005716,
+          "Addition and Subtraction Integers": 0.406680510301756,
+          "Area Rectangle": 0.15081721672066334,
+          "Conversion of Fraction Decimals Percents": 0.44203672084591233,
+          "Equation Solving Two or Fewer Steps": 0.44540921141740775,
+          "Multiplication and Division Integers": 0.40798042391126643,
+          "Percent Of": 0.36854210638150736,
+          "Venn Diagram": 0.3071576508065858,
+          "Volume Cylinder": 0.2939232015499361,
+          "Volume Rectangular Prism": 0.19703808441688514
+        }
+      }
+    },
+    "KtPps": {
+      "source": "Pardos and Heffernan 2010, Modeling individualization in a Bayesian networks implementation of knowledge tracing",
+      "pybkt": {
+        "kt_better": 30,
+        "pps_better": 12
+      },
+      "published": {
+        "pps_better": 30
+      }
+    },
+    "ItemOrderEffect": {
+      "source": "Pardos and Heffernan 2009; the original data is no longer available",
+      "pybkt": {
+        "rmse_bkt": {
+          "Venn Diagram": 0.33173569977621586
+        },
+        "rmse_item_order": {
+          "Venn Diagram": 0.3278995081558783
+        }
+      }
+    },
+    "ItemLearningEffect": {
+      "source": "Pardos and Heffernan 2009; the original data is no longer available",
+      "pybkt": {
+        "rmse_bkt": {
+          "Addition and Subtraction Fractions": 0.42186685567849347,
+          "Addition and Subtraction Integers": 0.41078182489012116,
+          "Area Rectangle": 0.15008874344152717,
+          "Conversion of Fraction Decimals Percents": 0.4555969365301772,
+          "Equation Solving Two or Fewer Steps": 0.45573699716143334,
+          "Multiplication and Division Integers": 0.3970378927668342,
+          "Percent Of": 0.38402651339496907,
+          "Venn Diagram": 0.33216448834940204,
+          "Volume Cylinder": 0.29527217010470147,
+          "Volume Rectangular Prism": 0.23332710901393083
+        },
+        "rmse_item_learning": {
+          "Addition and Subtraction Fractions": 0.4357969737827843,
+          "Addition and Subtraction Integers": 0.4355967174655516,
+          "Area Rectangle": 0.25008942087881075,
+          "Conversion of Fraction Decimals Percents": 0.45777525387557977,
+          "Equation Solving Two or Fewer Steps": 0.4650021077512241,
+          "Multiplication and Division Integers": 0.4159029967055564,
+          "Percent Of": 0.4131425887514103,
+          "Venn Diagram": 0.35319861627753046,
+          "Volume Cylinder": 0.3617920389270984,
+          "Volume Rectangular Prism": 0.28545983312531065
+        }
+      }
+    }
+  }
+}

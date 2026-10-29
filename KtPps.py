@@ -5,8 +5,14 @@ import os
 from pyBKT.models import Model
 import copy
 import pandas as pd
-import sklearn.metrics as sk
+import results
 np.seterr(divide='ignore', invalid='ignore')
+
+def without_last_response(df):
+    """Drop each student's last response, the one PPS and BKT predict, unless it is their only one."""
+    position_from_end = df.groupby('user_id').cumcount(ascending=False)
+    group_size = df.groupby('user_id')['user_id'].transform('size')
+    return df[(position_from_end > 0) | (group_size == 1)].reset_index(drop=True)
 
 if __name__ == '__main__':
     num_fit_initializations = 20
@@ -31,7 +37,7 @@ if __name__ == '__main__':
     
         df0 = pd.read_csv("./data/glops-exact-processed/"+i)
         seq_length = round(len(df0) / len(df0["user_id"].unique()))
-        df_train = (df0.groupby('user_id').apply(lambda x: x.iloc[:-1] if len(x)>1 else x).reset_index(drop=True)) #remove all but last element
+        df_train = without_last_response(df0)
     
         model = Model(num_fits = 10, seed=2020)
 
@@ -40,13 +46,13 @@ if __name__ == '__main__':
     
         y_pred = predictions["correct_predictions"][seq_length-1::seq_length]
         y_true = df0["correct"][seq_length-1::seq_length]
-        bkt_mae = sk.mean_absolute_error(y_true, y_pred)
+        bkt_mae = np.mean(np.abs(np.asarray(y_true) - np.asarray(y_pred)))
     
     
     
         df0 = pd.read_csv("./data/glops-exact-processed/"+i)
         seq_length = round(len(df0) / len(df0["user_id"].unique()))
-        df_train = (df0.groupby('user_id').apply(lambda x: x.iloc[:-1] if len(x)>1 else x).reset_index(drop=True)) #remove all but last element
+        df_train = without_last_response(df0)
         model2 = Model(num_fits = 10, seed=2020)
     
         model2.fit(data = df_train, multiprior=True)
@@ -60,7 +66,7 @@ if __name__ == '__main__':
         y_pred = predictions2["correct_predictions"][seq_length-1::seq_length]
         # print(y_pred[:10], y_true[:10])
         y_true = df0["correct"][seq_length-1::seq_length]
-        mp_mae = sk.mean_absolute_error(y_true, y_pred)
+        mp_mae = np.mean(np.abs(np.asarray(y_true) - np.asarray(y_pred)))
     
         print("Standard BKT MAE:", bkt_mae)
         maes.append(bkt_mae)
@@ -76,3 +82,4 @@ if __name__ == '__main__':
 
     print("PPS performs better in", pps_better, "datasets")
     print("KT performs better in", kt_better, "datasets")
+    results.save("KtPps", {"pps_better": pps_better, "kt_better": kt_better})
