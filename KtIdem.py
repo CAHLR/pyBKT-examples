@@ -2,6 +2,7 @@ import sys
 sys.path.append('../')
 import numpy as np
 from pyBKT.models import Model
+import results
 np.seterr(divide='ignore', invalid='ignore')
 
 if __name__ == '__main__':
@@ -10,8 +11,13 @@ if __name__ == '__main__':
     model = Model(seed = 0, num_fits = 20)
     print("BKT")
     #print(model.crossvalidate(data_path = "data/as.csv", skills = skills, metric = "auc"))
-    print(model.crossvalidate(data_path = "data/as.csv", skills = skills, metric = "rmse"))
+    bkt = model.crossvalidate(data_path = "data/as.csv", skills = skills, metric = "rmse")
+    print(bkt)
     print()
     print("KT-IDEM")
     #print(model.crossvalidate(data_path = "data/as.csv", skills = skills, multigs = True, metric = "auc"))
-    print(model.crossvalidate(data_path = "data/as.csv", skills = skills, multigs = True, metric = "rmse"))
+    # A new Model for each crossvalidate call, so the second keeps seed and num_fits (CAHLR/pyBKT#120).
+    model = Model(seed = 0, num_fits = 20)
+    idem = model.crossvalidate(data_path = "data/as.csv", skills = skills, multigs = True, metric = "rmse")
+    print(idem)
+    results.save("KtIdem", {"rmse_bkt": bkt["rmse"].to_dict(), "rmse_idem": idem["rmse"].to_dict()})
